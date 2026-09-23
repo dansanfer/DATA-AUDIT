@@ -1,0 +1,40 @@
+services:
+  audit-db:
+    image: postgres:16-alpine
+    container_name: audit-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: audit_db
+      POSTGRES_USER: audit_admin
+      POSTGRES_PASSWORD: audit_password
+    ports:
+      - "5433:5432"
+    volumes:
+      - audit_pgdata:/var/lib/postgresql/data
+      - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - audit-net
+
+  audit-api:
+    build: .
+    container_name: audit-api
+    restart: on-failure
+    depends_on:
+      - audit-db
+    ports:
+      - "8081:8080"
+    environment:
+      DB_HOST: audit-db
+      DB_PORT: 5432
+      DB_NAME: audit_db
+      DB_USER: audit_admin
+      DB_PASSWORD: audit_password
+    networks:
+      - audit-net
+
+volumes:
+  audit_pgdata:
+
+networks:
+  audit-net:
+    driver: bridge
