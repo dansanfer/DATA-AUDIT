@@ -1,11 +1,6 @@
 package com.fasec.auditoria.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
@@ -43,6 +38,9 @@ public class AuditEvent {
     @Column(columnDefinition = "TEXT")
     private String metadados;
 
+    @Column(name = "hash_integridade", nullable = false, length = 64, updatable = false)
+    private String hashIntegridade;
+
     @Column(name = "data_criacao", nullable = false, updatable = false)
     private LocalDateTime dataCriacao = LocalDateTime.now();
 
@@ -50,7 +48,7 @@ public class AuditEvent {
 
     public AuditEvent(String origem, String entidade, String idEntidade, String tipoOperacao, 
                       String autor, LocalDateTime dataHoraEvento, String estadoAnterior, 
-                      String estadoAtual, String metadados) {
+                      String estadoAtual, String metadados, String hashIntegridade) {
         this.origem = origem;
         this.entidade = entidade;
         this.idEntidade = idEntidade;
@@ -60,6 +58,7 @@ public class AuditEvent {
         this.estadoAnterior = estadoAnterior;
         this.estadoAtual = estadoAtual;
         this.metadados = metadados;
+        this.hashIntegridade = hashIntegridade;
         this.dataCriacao = LocalDateTime.now();
     }
 
@@ -73,5 +72,6 @@ public class AuditEvent {
     public String getEstadoAnterior() { return estadoAnterior; }
     public String getEstadoAtual() { return estadoAtual; }
     public String getMetadados() { return metadados; }
+    public String getHashIntegridade() { return hashIntegridade; }
     public LocalDateTime getDataCriacao() { return dataCriacao; }
 }
